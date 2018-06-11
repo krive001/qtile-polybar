@@ -4,7 +4,7 @@ set -e
 sudo pacman -Syy
 
 # pacman packages qtile
-sudo pacman -S feh polkit-gnome xcompmgr  python-xdg  --needed --noconfirm
+sudo pacman -S feh polkit-gnome xcompmgr  python-xdg python-requests  --needed --noconfirm
 
 # Thunar
 sudo pacman -S thunar gvfs tumbler thunar-volman thunar-archive-plugin thunar-media-tags-plugin  --needed --noconfirm
@@ -54,4 +54,4 @@ yaourt -S sublime-text-dev --noconfirm
 
 #polybar
 
-yaourt -S polybar --noconfirm
+yaourt -S polybar siji-git  --noconfirm

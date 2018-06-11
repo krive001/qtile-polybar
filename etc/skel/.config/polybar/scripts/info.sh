@@ -20,7 +20,7 @@ GtkIcon=$(awk < ~/.gtkrc-2.0 -F'"' '/gtk-icon-theme-name/{print $2}' )
 GtkFont=$(awk < ~/.gtkrc-2.0 -F'"' '/gtk-font-name/{print $2}')
 
 
-Packages=$(checkupdates | wc -l)
+#Packages=$(checkupdates | wc -l)
 Layout=$(setxkbmap -print | awk -F"+" '/xkb_symbols/{for ( i=1; i <= NF; i++) sub(".", substr(toupper($i),1,1) , $i); print $2}')
 
 
@@ -40,7 +40,7 @@ echo -en "   $USER"
  echo -en "   $GtkIcon"
  echo -en "   $GtkFont"
  #echo -en "   $BIRTH"
- echo -en "   $Packages"
+# echo -en "   $Packages"
  echo -en "   $Layout"
 # echo -en "   $USER"
 
