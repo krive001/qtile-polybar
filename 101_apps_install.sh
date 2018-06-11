@@ -38,7 +38,7 @@ sudo mv 10-powerline-symbols.conf /etc/fonts/conf.d/
 sudo pacman -S lxappearance qt5ct --needed --noconfirm
 
 # ttf and otf
-sudo pacman -S ttf-inconsolata --needed --noconfirm
+sudo pacman -S ttf-inconsolata  ttf-font-awesome  --needed --noconfirm
 
 #neofetch
 sudo pacman -S neofetch --needed --noconfirm
