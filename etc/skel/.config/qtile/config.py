@@ -28,11 +28,12 @@ import os
 import re
 import socket
 import subprocess
-from libqtile.config import Key, Screen, Group, Drag, Click, Match, Rule
-from libqtile.command import lazy
+from libqtile.config import Drag, Key, Screen, Group, Drag, Click, Match, Rule, ScratchPad, DropDown
+from libqtile.command import lazy, Client
 from libqtile import layout, bar, widget, hook
 from libqtile.widget import Spacer
 from libqtile.dgroups import simple_key_binder
+from libqtile.manager import Qtile
 
 
 try:
@@ -43,6 +44,9 @@ except ImportError:
 mod = "mod4"
 myTerm="urxvt"
 myBrowser="chromium"
+
+
+
 
 @lazy.function
 def window_to_prev_group(qtile):
@@ -57,7 +61,15 @@ def window_to_next_group(qtile):
         qtile.currentWindow.togroup(qtile.groups[i + 1].name)
 
 
-def app_or_group(group, app):
+@hook.subscribe.client_new
+def grouper(window):
+    try:
+        print('NEW WINDOW! Class: ' + str(window.window.get_wm_class()))
+        if(window.window.get_wm_class()[1] == 'Chromium'):
+            window.togroup("")
+    except:
+        pass # TODO: handle errors. LibreOffice makes qtile crash here
+def app_or_group1(group, app):
     def f(qtile):
         if qtile.groupMap[group].windows:
             qtile.groupMap[group].cmd_toscreen()
@@ -67,6 +79,30 @@ def app_or_group(group, app):
     return f
 
 
+
+def app_or_group(group, app, match=None):
+    """Go to group if it exists, or revert to last group if it is the current
+    group.  Otherwise launch the application.  This is for use with dynamic
+    groups configured to work with the application."""
+    def f(qtile, match=match):
+        if group in qtile.groupMap.keys():
+            if match:
+                running = [match.compare(w)
+                           for w in qtile.groupMap[group].windows]
+                if True not in running:
+                    qtile.cmd_spawn(app)
+                    qtile.groupMap[group].cmd_toscreen()
+                else:
+                    qtile.currentScreen.cmd_togglegroup(group)
+            else:
+                qtile.currentScreen.cmd_togglegroup(group)
+        else:
+            qtile.cmd_spawn(app)
+    return f
+
+
+
+
 @hook.subscribe.startup_once
 def start_once():
     home = os.path.expanduser('~')
@@ -74,7 +110,17 @@ def start_once():
 
 
 
+
 keys = [
+           Key([], 'F11', lazy.group['s'].dropdown_toggle('term')),
+     Key([], 'F12', lazy.group['s'].dropdown_toggle('qshell')),
+
+            
+            Key(
+                [mod], "Up",
+                lazy.window.up_opacity()),
+
+
             Key(
                 [mod], "Return", 
                 lazy.spawn(myTerm)                        # Open terminal
@@ -148,7 +194,7 @@ keys = [
                 ),
             Key(
                 [mod], "n", 
-                lazy.layout.normalize()                   # Restore all windows to default size ratios 
+                lazy.layout.normalize(),                   # Restore all windows to default size ratios 
                 ),
             Key(
                 [mod], "m", 
@@ -175,16 +221,14 @@ keys = [
                 ),
             # GUI Apps
             Key(
-                [mod], "w", 
-                lazy.function(app_or_group("", myBrowser))
-                ),
+                [mod], "w", lazy.function(app_or_group1("",myBrowser))),   # , Match(title=["Chromium"])
             Key(
                 [mod], "Print", 
                 lazy.spawn("spectacle")
                 ),    
             Key(
                 [mod], "c", 
-                lazy.function(app_or_group("", "discord"))
+                lazy.function(app_or_group("", "discord",  Match(title=["Discord"])))               # ,  Match(title=["Discord"])
                 ),
             Key(
                 [mod], "t", 
@@ -200,17 +244,17 @@ keys = [
                 ),
             Key(
                 [mod], "g", 
-                lazy.function(app_or_group("", "subl3"))
+                lazy.function(app_or_group("", "subl3",  Match(title=["Sublime Text"])))            #,  Match(title=["Sublime Text"])
                 ),
             # Terminal Apps
             Key(
-                [mod], "d",                                 
-                lazy.spawn("rofi -show run")                                      # Run Rofi
-                ),
+                [mod], "d", lazy.spawn("rofi -show run"), desc=("[Run Rofi]")),
+            Key(
+                [mod], "x",                                 
+                lazy.spawn('oblogout')),
             Key(
                 [mod], "KP_End",                                     # Keypad 1
-                lazy.spawn(myTerm+" -e ranger")
-                ),
+                lazy.spawn(myTerm+" -e ranger")),
             Key(
                 [mod], "KP_Down",                                    # Keypad 2
                 lazy.spawn(myTerm+" -e htop")
@@ -253,12 +297,26 @@ my_group = ["", "", "", "", "", "", ""]
 # group layout
 
 for i in my_group:
-    if i == "":
+    if i == "":
+        groups.append(Group(i, layout = "monadtall"))
+    elif i == "":
         groups.append(Group(i, layout = "monadtall"))
     elif i == "":
         groups.append(Group(i, layout = "bsp"))
     else:
         groups.append(Group(i, layout = "max"))
+
+groups.append(ScratchPad("s", [
+        # define a drop down terminal.
+        # it is placed in the upper third of screen by default.
+        DropDown("term", "urxvt", opacity=0.8),
+
+        # define another terminal exclusively for qshell at different position
+        DropDown("qshell", "urxvt -hold -e qshell",
+                 x=0.05, y=0.4, width=0.9, height=0.6, opacity=0.9,
+                 on_focus_lost_hide=True)
+        
+         ])), 
 
 # Add numeric key Group
 for c, name in enumerate(my_group, 1):
@@ -285,7 +343,7 @@ layouts = [
     layout.Max(**layout_theme),
     layout.Bsp(**layout_theme),
     layout.MonadTall(**layout_theme),
-    layout.Stack(num_stacks=2)
+    layout.Stack(num_stacks=2, **layout_theme)
 ]
 
 widget_defaults = dict(
@@ -333,11 +391,12 @@ floating_layout = layout.Floating(float_rules=[
     {'wmclass': 'confirmreset'},  # gitk
     {'wmclass': 'makebranch'},  # gitk
     {'wmclass': 'maketag'},  # gitk
+    {'wname': "Openbox Logout"},
     {'wname': 'branchdialog'},      # gitk
-    {'wname': 'Openbox Logout'}, #oblogot
     {'wname': 'pinentry'},  # GPG key password entry
     {'wmclass': 'ssh-askpass'},  # ssh-askpass
-])
+
+],  fullscreen_border_width = 0, border_width = 0)
 auto_fullscreen = True
 focus_on_window_activation = "smart"
 
