@@ -26,7 +26,7 @@ sudo pacman -S  firefox-i18n-hu --needed --noconfirm
 
 # powerline
 sudo pacman -S powerline --needed --noconfirm
-yaourt -S powerline-fonts-git --noconfirm
+yay -S powerline-fonts-git --noconfirm
 
 wget https://github.com/powerline/powerline/raw/develop/font/PowerlineSymbols.otf
 wget https://github.com/powerline/powerline/raw/develop/font/10-powerline-symbols.conf
@@ -44,14 +44,14 @@ sudo pacman -S ttf-inconsolata  ttf-font-awesome  --needed --noconfirm
 sudo pacman -S neofetch --needed --noconfirm
 
 # AUR packages
-yaourt -S ttf-font-awesome otf-font-awesome pasystray-gtk3-git  --noconfirm
+yay -S ttf-font-awesome otf-font-awesome pasystray-gtk3-git  --noconfirm
 
 #Pamac
-yaourt -S pamac-aur  --noconfirm
+yay -S pamac-aur  --noconfirm
 
 #sublime-text3
-yaourt -S sublime-text-dev --noconfirm
+yay -S sublime-text-dev --noconfirm
 
 #polybar
 
-yaourt -S polybar siji-git  --noconfirm
+yay -S polybar siji-git  --noconfirm

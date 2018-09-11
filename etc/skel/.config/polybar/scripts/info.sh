@@ -39,9 +39,6 @@ echo -en "   $USER"
 # echo -en "   $GtkTheme"
  echo -en "   $GtkIcon"
  echo -en "   $GtkFont"
- #echo -en "   $BIRTH"
-# echo -en "   $Packages"
+echo -en "   $BIRTH"
+ echo -en "   $Packages"
  echo -en "   $Layout"
-# echo -en "   $USER"
-
-
