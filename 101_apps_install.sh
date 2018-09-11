@@ -55,3 +55,6 @@ yay -S sublime-text-dev --noconfirm
 #polybar
 
 yay -S polybar siji-git  --noconfirm
+
+sudo pacman -S rxvt-unicode wmctrl rofi xdg-user-dirs --noconfirm
+yay -S urxvt-perls ttf-font-awesome-4  --noconfirm
