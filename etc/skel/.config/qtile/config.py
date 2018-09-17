@@ -23,6 +23,8 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+# Update Kriszián Veress (krive) 2018-09-16
+
 
 import os
 import re
@@ -36,15 +38,19 @@ from libqtile.widget import Spacer
 from libqtile.manager import Qtile
 
 
-try:
-    from typing import List  # noqa: F401
-except ImportError:
-    pass
+#try:
+#    from typing import List  # noqa: F401
+#except ImportError:
+#   pass
+
+
 
 #Window buttom
 mod = "mod4"
 # Alt bottom
-mod1 = "mod1"
+#mod1 = "mod1"
+home = os.path.expanduser('~')
+
 
 myTerm="urxvt"
 myBrowser="chromium"
@@ -67,12 +73,12 @@ cls_grp_dict = {
     "Steam": "8", "Wine": "8", "thunar": "8",
     "PlayOnLinux": "8", "VirtualBox": "9", "okular": "9", "calibre": "9",
     "octopi": "9", "Pamac-updater": "9", "Pamac-manager": "9", "Lxtask": "9",
-    "Dukto": "9", "QuiteRss": "9", "Filezilla": "9",
+    "Dukto": "9", "QuiteRss": "9", "Filezilla": "9", "Spotify": "9", 
     "jetbrains-pycharm-ce": "5",
 }
 
 role_grp_dict = {
-    "browser": "1", "gimp-image-window": "5", "filemanager": "8",
+    "browser": "1", "chat": "4",  "gimp-image-window": "5", "filemanager": "8",
 
 }
 
@@ -121,7 +127,7 @@ group_matches = [
     # 4
     [Match(wm_class=[
         "discord",
-    ]), ],
+    ], role=["chat"]), ],
     # 5
     [Match(wm_class=[
         "Gimp", "Gthumb", "org.kde.gwenview",
@@ -153,7 +159,7 @@ group_matches = [
     ]), ],
     # 0
     [Match(wm_class=[
-        "Steam", "Wine", "Zenity",
+        "Steam", "Spotify", "Wine", "Zenity",
         "PlayOnLinux", 
     ]), ],
 
@@ -276,7 +282,7 @@ keys = [
     #########################
     Key([mod, "shift"], "Print", lazy.spawn('gnome-screenshot -i')),
     Key([mod], "Print", lazy.spawn('xfce4-screenshooter')),
-    Key([], "Print", lazy.spawn("scrot ~/Képek/ArcoLinuxD_%Y_%m_%d_%H_%M_%S.jpg")),
+    Key([], "Print", lazy.spawn("scrot " + home + "/Képek/ArcoLinuxD_%Y_%m_%d_%H_%M_%S.jpg")),
     #########################
     #     MULTIMEDIA KEYS   #
     #########################
@@ -382,7 +388,7 @@ group_names = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0",]
 
 group_labels = ["", "", "", "", "", "", "", "", "", "",]
 
-group_layouts = ["monadtall", "monadtall", "bsp", "max", "max", "max", "max", "max", "max", 
+group_layouts = ["max", "monadtall", "bsp", "max", "max", "max", "max", "max", "max", 
 "max",]
 
 
@@ -390,7 +396,7 @@ for i in range(len(group_names)):
     groups.append(
         Group(
             name=group_names[i],
-            matches=group_matches[i],
+            #matches=group_matches[i],
             exclusive=group_exclusives[i],
             layout=group_layouts[i].lower(),
             persist=group_persists[i],
@@ -501,14 +507,77 @@ def start_once():
     home = os.path.expanduser('~')
     subprocess.call([home + '/.config/qtile/autostart.sh'])
 
-@hook.subscribe.client_managed
-def go_to_group(window):
-    if (window.window.get_wm_class()[1] in cls_grp_dict.keys()
-      or window.window.get_wm_window_role() in role_grp_dict.keys()):
-       window.group.cmd_toscreen()
+#@hook.subscribe.client_managed
+#def go_to_group(window):
+#    if (window.window.get_wm_class()[1] in cls_grp_dict.keys()
+#      or window.window.get_wm_window_role() in role_grp_dict.keys()):
+#       window.group.cmd_toscreen()
+
+
+#def go_to_group(window):
+ #   if window.window.get_wm_class()[1] in cls_grp_dict.keys():
+ #      window.group.cmd_toscreen()
 
 
 
+
+@hook.subscribe.client_new
+def set_floating(window):
+    if (window.window.get_wm_transient_for()
+            or window.window.get_wm_type() in floating_types):
+        window.floating = True
+
+@hook.subscribe.client_new
+def agroup(client):
+    apps = { 
+            # 1 Browser
+            "Navigator": "1", "class_name": "firefox",
+            "google-chrome": "1", "class_name": "goole-chrome",
+            
+            # 2 Edit
+            "subl3": "2", "class_name": "subl3",
+            "leafpad": "2", "class_name": "leafpad",
+            
+            # 3 Shell
+            "urxvt": "3", "class_name": myTerm,
+            
+            # 4 Chat
+            "discord": "4", "class_name": "discord",
+            
+            # 5 ImageViewers
+            "gimp": "5", "class_name": "gimp",
+            
+            # 6 Boxes
+            "VirtualBox": "6", "class_name": "virtualbox",
+            
+            # 7 Video
+            "vlc": "7", "class_name": "vlc",
+
+            #  8 File Manager
+            "thunar": "8", "class_name": "thunar", 
+            "pcmanfm": "8", "class_name": "pcmanfm",
+
+            # 9 Music
+            "spotify": "9", "class_name": "spotify",
+
+            # 0 Other
+            "pamac-manager": "0", "class_name": "pamac-manager",
+
+            }
+
+    wm_class = client.window.get_wm_class()[0]
+    group = apps.get(wm_class, None)
+    if group:
+        client.togroup(group)
+        client.group.cmd_toscreen()
+
+
+
+
+
+floating_types = ["notification", "toolbar", "splash", "dialog",
+                  "utility", "menu", "dropdown_menu", "popup_menu", "tooltip,dock",
+                  ]
 
 
 follow_mouse_focus = True
