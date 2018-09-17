@@ -23,7 +23,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-# Update Kriszián Veress (krive) 2018-09-16
+# Update Kriszián Veress (krive) 2018-09-16 https://github.com/krive001/qtile-polybar
 
 
 import os
@@ -38,132 +38,14 @@ from libqtile.widget import Spacer
 from libqtile.manager import Qtile
 
 
-#try:
-#    from typing import List  # noqa: F401
-#except ImportError:
-#   pass
-
-
 
 #Window buttom
 mod = "mod4"
-# Alt bottom
-#mod1 = "mod1"
 home = os.path.expanduser('~')
 
 
 myTerm="urxvt"
-myBrowser="chromium"
-
-
-cls_grp_dict = {
-    "luakit": "1", "Firefox": "1", "Opera": "1", "Google-chrome": "1",
-    "Chromium": "1", "Vivaldi-stable": "1", "Midori": "2", "Dillo": "2",
-    "Netsurf-gtk3": "2", "QupZilla": "2", "Uget-gtk": "2", "Tor Browser": "1",
-    "Waterfox": "1", "UXTerm": "3", "Termite": "3", "Terminator": "3",
-    "URxvt": "3", "mlterm": "3", "Lxterminal": "3",
-    "XTerm": "3", "discord": "4", "Pcmanfm": "8", "Thunar": "8", "dolphin": "8", "Caja": "8",
-    "Catfish": "8", "Zathura": "5", "libreoffice-writer": "5", "libreoffice": "5",
-    "Leafpad": "5", "kate": "5", "Pluma": "5", "Mousepad": "5", "Subl3": "6", 
-    "kwrite": "5", "Geany": "5", "Gedit": "5", "Code": "5",
-    "Atom": "5", "Gimp": "6", "Gthumb": "6", "org.kde.gwenview": "6",
-    "Ristretto": "6", "lximage-qt": "6", "Eom": "6", "Gpicview": "6",
-    "vlc": "7", "xv/mplayer": "7", "Clementine": "7", "MPlayer": "7",
-    "smplayer": "7", "mpv": "7", "Gnome-mpv": "7", "Rhythmbotx": "7",
-    "Steam": "8", "Wine": "8", "thunar": "8",
-    "PlayOnLinux": "8", "VirtualBox": "9", "okular": "9", "calibre": "9",
-    "octopi": "9", "Pamac-updater": "9", "Pamac-manager": "9", "Lxtask": "9",
-    "Dukto": "9", "QuiteRss": "9", "Filezilla": "9", "Spotify": "9", 
-    "jetbrains-pycharm-ce": "5",
-}
-
-role_grp_dict = {
-    "browser": "1", "chat": "4",  "gimp-image-window": "5", "filemanager": "8",
-
-}
-
-group_exclusives = [
-    False, False, False,
-    False, False, False,
-    False, False, False,
-    False,
-]
-
-group_persists = [
-    True, True, True,
-    True, True, True,
-    True, True, True,
-    True,
-]
-group_inits = [
-    True, True, True,
-    True, True, True,
-    True, True, True,
-    True,
-]
-
-
-group_matches = [
-    # 1
-    [Match(wm_class=[
-        "luakit", "Firefox", "Opera", "Google-chrome",
-        "Chromium", "Vivaldi-stable", "Midori",
-        "Dillo", "Netsurf-gtk3", "QupZilla",
-        "Uget-gtk", "Tor Browser", "Waterfox",
-    ], role=["browser"]), ],
-    # 2
-    [Match(wm_class=[
-        "Zathura", "libreoffice-writer", "libreoffice",
-        "Leafpad", "kate", "Pluma", "Mousepad", "kwrite",
-        "Geany", "Gedit", "Code", "Atom",
-        "jetbrains-pycharm-ce",
-    ]), ],
-    # 3
-    [Match(wm_class=[
-        "UXTerm", "Termite", "Terminator",
-        "URxvt",
-        "XTerm", "mlterm", "Lxterminal",
-    ]), ],
-    # 4
-    [Match(wm_class=[
-        "discord",
-    ], role=["chat"]), ],
-    # 5
-    [Match(wm_class=[
-        "Gimp", "Gthumb", "org.kde.gwenview",
-        "Ristretto", "lximage-qt", "Eom",
-        "Gpicview",
-    ], role=["gimp-image-window"]), ],
-    # 6
-    [Match(wm_class=[
-        "Subl3",
-     ]),],
-    # 7
-    [Match(wm_class=[
-        "VirtualBox", "okular", "calibre",
-        "octopi", "Pamac-updater",
-        "Lxtask",
-        "Dukto", "QuiteRss",
-        "Filezilla",
-    ]), ],
-    # 8
-    [Match(wm_class=[
-        "Pcmanfm", "Thunar", "thunar", "dolphin",
-        "Caja", "Catfish",
-    ], role=["filemanager"]), ],
-    # 9
-    [Match(wm_class=[
-        "vlc", "xv/mplayer", "Clementine",
-        "MPlayer", "smplayer", "mpv",
-        "Gnome-mpv", "Rhythmbox", "Pamac-manager",  
-    ]), ],
-    # 0
-    [Match(wm_class=[
-        "Steam", "Spotify", "Wine", "Zenity",
-        "PlayOnLinux", 
-    ]), ],
-
-]
+myBrowser="google-chrome-stable"
 
 
 @lazy.function
@@ -388,8 +270,27 @@ group_names = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0",]
 
 group_labels = ["", "", "", "", "", "", "", "", "", "",]
 
-group_layouts = ["max", "monadtall", "bsp", "max", "max", "max", "max", "max", "max", 
-"max",]
+group_layouts = ["max", "monadtall", "bsp", "max", "max", "max", "max", "max", "max", "max",]
+
+group_exclusives = [
+    False, False, False,
+    False, False, False,
+    False, False, False,
+    False,
+]
+
+group_persists = [
+    True, True, True,
+    True, True, True,
+    True, True, True,
+    True,
+]
+group_inits = [
+    True, True, True,
+    True, True, True,
+    True, True, True,
+    True,
+]
 
 
 for i in range(len(group_names)):
@@ -412,46 +313,6 @@ for i in groups:
         # mod1 + shift + letter of group = switch to & move focused window to group
         Key([mod, "shift"], i.name, lazy.window.togroup(i.name)),
     ])
-
-
-
-
-
-#my_group = ["", "", "", "", "", "", "",]
-
-# group layout
-
-#for i in my_group:
-#    if i == "":
-#        groups.append(Group(i, layout = "monadtall"))
-#    elif i == "":
-#        groups.append(Group(i, layout = "monadtall"))
-#    elif i == "":
-#        groups.append(Group(i, layout = "bsp"))
-#    else:
-#        groups.append(Group(i, layout = "max"))
-
-#groups.append(ScratchPad("s", [
-#        # define a drop down terminal.
-#        # it is placed in the upper third of screen by default.
-#        DropDown("term", "urxvt", opacity=0.8),
-
-        # define another terminal exclusively for qshell at different position
-#        DropDown("qshell", "urxvt -hold -e qshell",
-#                 x=0.05, y=0.4, width=0.9, height=0.6, opacity=0.9,
-#                 on_focus_lost_hide=True)
-#        
-#         ])), 
-
-# Add numeric key Group
-#for c, name in enumerate(my_group, 1):
-#    keys.append(
-#            Key([mod], str(c), lazy.group[name].toscreen())
-#            )
-#    keys.append(
-#            Key([mod, "shift"], str(c), lazy.window.togroup(name))
-#            )
-
 
 
 def init_layout_theme():
@@ -507,18 +368,6 @@ def start_once():
     home = os.path.expanduser('~')
     subprocess.call([home + '/.config/qtile/autostart.sh'])
 
-#@hook.subscribe.client_managed
-#def go_to_group(window):
-#    if (window.window.get_wm_class()[1] in cls_grp_dict.keys()
-#      or window.window.get_wm_window_role() in role_grp_dict.keys()):
-#       window.group.cmd_toscreen()
-
-
-#def go_to_group(window):
- #   if window.window.get_wm_class()[1] in cls_grp_dict.keys():
- #      window.group.cmd_toscreen()
-
-
 
 
 @hook.subscribe.client_new
@@ -527,12 +376,21 @@ def set_floating(window):
             or window.window.get_wm_type() in floating_types):
         window.floating = True
 
+# go to app workspace 
+# for example firefox
+#  1. "Navigator" xprop WM_CLASS
+# output "Navigator", "Firefox"
+# 2. "1" Workspace
+# 3. "class_name": "firefox" run application name
+# "Navigator": "1", "class_name": "firefox",
+
+
 @hook.subscribe.client_new
 def agroup(client):
     apps = { 
             # 1 Browser
             "Navigator": "1", "class_name": "firefox",
-            "google-chrome": "1", "class_name": "goole-chrome",
+            "google-chrome": "1", "class_name": myBrowser,
             
             # 2 Edit
             "subl3": "2", "class_name": "subl3",
